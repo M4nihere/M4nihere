@@ -1,0 +1,29 @@
+---
+ - name: configuring cgroup driver
+   hosts: all
+   tasks:
+            - name: commenting a line in config.toml
+              lineinfile:
+                       path: /etc/containerd/config.toml
+                       regexp: '^disabled_plugins'
+                       # line: '^disabled_plugins'
+                       state: absent
+                       
+            - name: configuring cgroup driver with containerd
+              blockinfile:
+                      path: /etc/containerd/config.toml
+                      backup: yes
+                      block: |
+                                  version = 2
+                                  [plugins]
+                                   [plugins."io.containerd.grpc.v1.cri"]
+                                    [plugins."io.containerd.grpc.v1.cri".containerd]
+                                     [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
+                                      [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+                                        runtime_type = "io.containerd.runc.v2"
+                                        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+                                          SystemdCgroup=true
+            - name: restarting containerd 
+              service:
+                      name: containerd
+                      state: restarted

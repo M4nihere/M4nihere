@@ -1,0 +1,27 @@
+---
+ - name: initializing kubernetes cluster
+   hosts: controlplane
+   tasks:
+           - name: bootstrapping cluster using kubeadm
+             shell:
+                    cmd: kubeadm init
+
+           - name: generating cluster join command
+             shell:
+                     cmd: kubeadm token create --print-join-command
+             register: cluster_join
+           - name: adding test host
+             add_host:
+                 name: JOINS
+                 joinmaster: "{{ cluster_join.stdout }}"
+           - debug:
+                   var: hostvars.JOINS.joinmaster
+ 
+ - name: joining data plane to control plane
+   hosts: dataplane
+   tasks:
+           - debug:
+              msg: "{{ hostvars.JOINS.joinmaster }}"
+           - name: joining worker machine to kubernetes cluster
+             shell:
+                     cmd: "{{ hostvars.JOINS.joinmaster }}"

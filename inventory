@@ -1,0 +1,7 @@
+[controlplane]
+master
+
+[dataplane]
+servera
+serverb
+serverc

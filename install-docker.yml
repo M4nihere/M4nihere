@@ -1,0 +1,12 @@
+---
+ - name: install docker on every node in cluster
+   hosts: all
+   tasks:
+           - name: downloading docker install script
+             get_url:
+                     url: https://get.docker.com
+                     dest: /root/docker.sh
+
+           - name: running script docker.sh to install docker
+             shell:
+                     cmd: bash /root/docker.sh

@@ -1,0 +1,20 @@
+---
+ - name: installing kubelet kubectl kubeadm
+   hosts: all
+   tasks:
+           - name: configuring gpg key
+             shell:
+                     cmd: curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg
+
+           - name: adding apt repo
+             shell:
+                     cmd: echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+           - name: install packages
+             apt:
+                     pkg:
+                             - kubeadm
+                             - kubelet
+                             - kubectl
+                     state: present
+                     update_cache: yes
+

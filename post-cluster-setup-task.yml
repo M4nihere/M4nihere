@@ -1,0 +1,23 @@
+---
+ - name: performing post cluster setup task
+   hosts: controlplane
+   tasks:
+       - name: setting KUBECONFIG env 
+         lineinfile:
+              path: "{{ item }}"
+              line: export KUBECONFIG=/etc/kubernetes/admin.conf
+              state: present
+         loop:
+             - /root/.bashrc
+             - /root/.profile
+
+       - name: setting calico plugin
+         get_url:
+             url: https://raw.githubusercontent.com/projectcalico/calico/v3.26.0/manifests/calico.yaml
+             dest: /root/calico.yml
+
+       - name: applying calico.yml
+         shell:
+             cmd: source /root/.bashrc ; source /root/.profile ; kubectl apply -f /root/calico.yml
+         args:
+                 executable: /bin/bash

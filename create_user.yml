@@ -1,0 +1,10 @@
+---
+ - name: creating users
+   hosts: all
+   become: yes
+   tasks:
+           - name: create user jaipur
+             user:
+                     name: jaipur
+                     state: absent
+                     remove: yes
